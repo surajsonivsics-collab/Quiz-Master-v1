@@ -7,3 +7,4 @@ itsdangerous
 reportlab
 openpyxl
 werkzeug
+gunicorn
