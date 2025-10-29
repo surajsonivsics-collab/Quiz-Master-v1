@@ -1,0 +1,28 @@
+{% extends "base.html" %} {% block content %}
+<h2>Chapters for {{ subject.name }}</h2>
+<p>{{ subject.description }}</p>
+
+<a
+  href="{{ url_for('add_chapter', subject_id=subject.id) }}"
+  class="btn btn-primary mb-3"
+  >+ Add Chapter</a
+>
+<a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary mb-3"
+  >⬅ Back to Dashboard</a
+>
+
+<ul class="list-group">
+  {% for chapter in chapters %}
+  <li class="list-group-item">
+    <strong>{{ chapter.name }}</strong> - {{ chapter.description }}
+    <a
+      href="{{ url_for('manage_quizzes', chapter_id=chapter.id) }}"
+      class="btn btn-warning btn-sm float-end"
+      >Manage Quizzes</a
+    >
+  </li>
+  {% else %}
+  <li class="list-group-item"><em>No chapters yet</em></li>
+  {% endfor %}
+</ul>
+{% endblock %}

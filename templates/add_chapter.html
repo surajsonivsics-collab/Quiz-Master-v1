@@ -1,0 +1,28 @@
+{% extends "base.html" %} {% block content %}
+<h2>Add Chapter for {{ subject.name }}</h2>
+
+<form method="POST">
+  <div class="mb-3">
+    <label for="name" class="form-label">Chapter Name</label>
+    <input type="text" name="name" id="name" class="form-control" required />
+  </div>
+
+  <div class="mb-3">
+    <label for="description" class="form-label">Description</label>
+    <textarea
+      name="description"
+      id="description"
+      class="form-control"
+    ></textarea>
+  </div>
+
+  <button type="submit" class="btn btn-primary">Add Chapter</button>
+
+  <a
+    href="{{ url_for('view_chapters', subject_id=subject_id) }}"
+    class="btn btn-secondary"
+  >
+    Back to Chapters
+  </a>
+</form>
+{% endblock %}

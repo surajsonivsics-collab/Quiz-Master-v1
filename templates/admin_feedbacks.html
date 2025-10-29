@@ -1,0 +1,38 @@
+{% extends "base.html" %} {% block content %}
+<div class="container mt-4">
+  <h2>User Feedback</h2>
+  <table class="table table-bordered table-striped">
+    <thead>
+      <tr>
+        <th>User</th>
+        <th>Quiz</th>
+        <th>Feedback</th>
+        <th>Rating</th>
+        <th>Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for fb in feedbacks %}
+      <tr>
+        <!-- ✅ User name -->
+        <td>{{ fb.user.full_name if fb.user else "N/A" }}</td>
+
+        <!-- ✅ Quiz name -->
+        <td>{{ fb.quiz.name if fb.quiz else "General" }}</td>
+
+        <!-- ✅ Comment (fixed field name) -->
+        <td>{{ fb.comment }}</td>
+
+        <!-- ✅ Rating (fixed field name) -->
+        <td>
+          {{ rating_map[fb.rating] if fb.rating in rating_map else "N/A" }}
+        </td>
+
+        <!-- ✅ Date formatted -->
+        <td>{{ fb.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

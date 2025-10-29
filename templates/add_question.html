@@ -1,0 +1,67 @@
+{% extends "base.html" %} {% block content %}
+<h2>Add Question to Quiz: <strong>{{ quiz.name }}</strong></h2>
+
+<form method="POST">
+  <div class="mb-3">
+    <label for="question_statement" class="form-label">Question</label>
+    <textarea
+      name="question_statement"
+      id="question_statement"
+      class="form-control"
+      required
+    ></textarea>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Options</label>
+    <input
+      type="text"
+      name="option1"
+      placeholder="Option 1"
+      class="form-control mb-2"
+      required
+    />
+    <input
+      type="text"
+      name="option2"
+      placeholder="Option 2"
+      class="form-control mb-2"
+      required
+    />
+    <input
+      type="text"
+      name="option3"
+      placeholder="Option 3"
+      class="form-control mb-2"
+      required
+    />
+    <input
+      type="text"
+      name="option4"
+      placeholder="Option 4"
+      class="form-control mb-2"
+      required
+    />
+  </div>
+
+  <div class="mb-3">
+    <label for="correct_option" class="form-label">Correct Option (1-4)</label>
+    <input
+      type="number"
+      name="correct_option"
+      id="correct_option"
+      min="1"
+      max="4"
+      class="form-control"
+      required
+    />
+  </div>
+
+  <button type="submit" class="btn btn-primary">Add Question</button>
+  <a
+    href="{{ url_for('manage_questions', quiz_id=quiz.id) }}"
+    class="btn btn-secondary"
+    >Cancel</a
+  >
+</form>
+{% endblock %}

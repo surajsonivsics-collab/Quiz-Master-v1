@@ -1,0 +1,29 @@
+{% extends "base.html" %} {% block content %}
+<h2 class="mb-4">All Users Quiz Scores</h2>
+
+<!-- 🔹 Scores Table -->
+<table class="table table-bordered table-hover">
+  <thead class="table-dark">
+    <tr>
+      <th>User</th>
+      <th>Quiz</th>
+      <th>Score</th>
+      <th>Date</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for s in scores %}
+    <tr>
+      <td>{{ s.user }}</td>
+      <td>{{ s.quiz }}</td>
+      <td>{{ s.score }}</td>
+      <td>{{ s.time }}</td>
+    </tr>
+    {% else %}
+    <tr>
+      <td colspan="4" class="text-center"><em>No scores available</em></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

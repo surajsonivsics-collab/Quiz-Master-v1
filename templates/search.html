@@ -1,0 +1,43 @@
+{% extends "base.html" %} {% block content %}
+<h2>Search</h2>
+<form method="post" class="d-flex mb-3">
+  <input
+    type="text"
+    name="query"
+    class="form-control me-2"
+    placeholder="Search subjects, chapters, quizzes..."
+    value="{{ query }}"
+  />
+  <button class="btn btn-primary">Search</button>
+</form>
+
+{% if results %}
+<h4>Subjects</h4>
+<ul class="list-group mb-3">
+  {% for s in results.subjects %}
+  <li class="list-group-item">{{ s.name }}</li>
+  {% else %}
+  <li class="list-group-item text-muted">No subjects found</li>
+  {% endfor %}
+</ul>
+
+<h4>Chapters</h4>
+<ul class="list-group mb-3">
+  {% for c in results.chapters %}
+  <li class="list-group-item">{{ c.name }}</li>
+  {% else %}
+  <li class="list-group-item text-muted">No chapters found</li>
+  {% endfor %}
+</ul>
+
+<h4>Quizzes</h4>
+<ul class="list-group">
+  {% for q in results.quizzes %}
+  <li class="list-group-item">
+    Quiz {{ q.id }} ({{ q.remarks or 'No remarks' }})
+  </li>
+  {% else %}
+  <li class="list-group-item text-muted">No quizzes found</li>
+  {% endfor %}
+</ul>
+{% endif %} {% endblock %}

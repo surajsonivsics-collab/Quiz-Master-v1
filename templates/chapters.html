@@ -1,0 +1,40 @@
+{% extends "base.html" %} {% block content %}
+<h2>Chapters</h2>
+<form
+  method="post"
+  action="{{ url_for('add_chapter', subject_id=subject_id) }}"
+  class="row g-2 mb-3"
+>
+  <div class="col">
+    <input
+      class="form-control"
+      name="name"
+      placeholder="Chapter name"
+      required
+    />
+  </div>
+  <div class="col">
+    <input class="form-control" name="description" placeholder="Description" />
+  </div>
+  <div class="col-auto"><button class="btn btn-success">Add</button></div>
+</form>
+<ul class="list-group">
+  {% for c in chapters %}
+  <li class="list-group-item d-flex justify-content-between">
+    {{ c.name }}
+    <span>
+      <a
+        class="btn btn-sm btn-primary"
+        href="{{ url_for('manage_quizzes', chapter_id=c.id) }}"
+        >Quizzes</a
+      >
+      <a
+        class="btn btn-sm btn-danger"
+        href="{{ url_for('delete_chapter', id=c.id, subject_id=subject_id) }}"
+        >Delete</a
+      >
+    </span>
+  </li>
+  {% endfor %}
+</ul>
+{% endblock %}

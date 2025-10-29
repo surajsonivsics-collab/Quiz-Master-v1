@@ -1,0 +1,77 @@
+{% extends "base.html" %} {% block content %}
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>📊 My Quiz Scores</h2>
+  </div>
+
+  <div class="card shadow-lg rounded p-3">
+    <table class="table table-hover align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th scope="col">Quiz ID</th>
+          <th scope="col">Score</th>
+          <th scope="col">Total</th>
+          <th scope="col">Date</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in scores %}
+        <tr>
+          <td>{{ s.quiz_id }}</td>
+          <td>
+            <span class="badge bg-success">{{ s.total_scored }}</span>
+          </td>
+          <td>{{ s.total_questions }}</td>
+          <td>{{ s.timestamp.strftime('%Y-%m-%d %H:%M') }}</td>
+          <td>
+            <a
+              href="{{ url_for('view_answers', score_id=s.id) }}"
+              class="btn btn-sm btn-primary me-2"
+            >
+              📖 View
+            </a>
+            <a
+              href="{{ url_for('export_answers_pdf', score_id=s.id) }}"
+              class="btn btn-sm btn-danger me-2"
+            >
+              ⬇ PDF
+            </a>
+            <a
+              href="{{ url_for('export_answers_excel', score_id=s.id) }}"
+              class="btn btn-sm btn-success"
+            >
+              ⬇ Excel
+            </a>
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="5" class="text-center text-muted">
+            No quiz attempts found.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Smooth modern styling -->
+<style>
+  .table-hover tbody tr:hover {
+    background-color: #f8f9fa;
+    transition: background-color 0.2s ease-in-out;
+  }
+  .btn {
+    border-radius: 10px;
+    transition: transform 0.2s;
+  }
+  .btn:hover {
+    transform: scale(1.05);
+  }
+  .card {
+    border-radius: 20px;
+  }
+</style>
+{% endblock %}

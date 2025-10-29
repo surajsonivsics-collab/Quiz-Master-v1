@@ -1,0 +1,75 @@
+{% extends "base.html" %} {% block content %}
+<div class="container mt-4">
+  <h2 class="mb-4">📑 Answer Sheet</h2>
+
+  <p><strong>Quiz:</strong> {{ quiz.name }}</p>
+  <p>
+    <strong>Date Attempted:</strong> {{ score.timestamp.strftime('%Y-%m-%d
+    %H:%M') }}
+  </p>
+  <p>
+    <strong>Your Score:</strong> {{ score.total_scored }}/{{
+    score.total_questions }}
+  </p>
+
+  <hr />
+
+  {% for ans in answers %}
+  <div class="card mb-3 shadow-sm">
+    <div class="card-body">
+      <h5 class="card-title">Q{{ loop.index }}. {{ ans.question }}</h5>
+      <ul class="list-group">
+        <li
+          class="list-group-item {% if ans.user_answer == 1 and ans.user_answer != ans.correct_option %}list-group-item-danger{% endif %} {% if ans.correct_option == 1 %}list-group-item-success{% endif %}"
+        >
+          {{ ans.option1 }} {% if ans.user_answer == 1 %}<span
+            class="badge bg-primary"
+            >Your Answer</span
+          >{% endif %} {% if ans.correct_option == 1 %}<span
+            class="badge bg-success"
+            >Correct</span
+          >{% endif %}
+        </li>
+        <li
+          class="list-group-item {% if ans.user_answer == 2 and ans.user_answer != ans.correct_option %}list-group-item-danger{% endif %} {% if ans.correct_option == 2 %}list-group-item-success{% endif %}"
+        >
+          {{ ans.option2 }} {% if ans.user_answer == 2 %}<span
+            class="badge bg-primary"
+            >Your Answer</span
+          >{% endif %} {% if ans.correct_option == 2 %}<span
+            class="badge bg-success"
+            >Correct</span
+          >{% endif %}
+        </li>
+        <li
+          class="list-group-item {% if ans.user_answer == 3 and ans.user_answer != ans.correct_option %}list-group-item-danger{% endif %} {% if ans.correct_option == 3 %}list-group-item-success{% endif %}"
+        >
+          {{ ans.option3 }} {% if ans.user_answer == 3 %}<span
+            class="badge bg-primary"
+            >Your Answer</span
+          >{% endif %} {% if ans.correct_option == 3 %}<span
+            class="badge bg-success"
+            >Correct</span
+          >{% endif %}
+        </li>
+        <li
+          class="list-group-item {% if ans.user_answer == 4 and ans.user_answer != ans.correct_option %}list-group-item-danger{% endif %} {% if ans.correct_option == 4 %}list-group-item-success{% endif %}"
+        >
+          {{ ans.option4 }} {% if ans.user_answer == 4 %}<span
+            class="badge bg-primary"
+            >Your Answer</span
+          >{% endif %} {% if ans.correct_option == 4 %}<span
+            class="badge bg-success"
+            >Correct</span
+          >{% endif %}
+        </li>
+      </ul>
+    </div>
+  </div>
+  {% endfor %}
+
+  <a href="{{ url_for('user_scores') }}" class="btn btn-secondary mt-3"
+    >⬅ Back to My Scores</a
+  >
+</div>
+{% endblock %}

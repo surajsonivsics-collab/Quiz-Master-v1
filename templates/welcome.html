@@ -1,0 +1,89 @@
+{% extends "base.html" %} {# 🚫 Remove navbar completely on welcome page #} {%
+block navbar %}{% endblock %} {% block content %}
+<div class="welcome-container text-center">
+  <h1 class="fw-bold animate__animated animate__fadeInDown">
+    Welcome to <span class="text-gradient">Quiz Master 🎓</span>
+  </h1>
+  <p class="lead animate__animated animate__fadeInUp animate__delay-1s">
+    Please login or register to continue.
+  </p>
+  <div class="mt-4">
+    <a
+      href="{{ url_for('login') }}"
+      class="btn btn-lg btn-primary me-2 animated-btn"
+    >
+      🔑 Login
+    </a>
+    <a
+      href="{{ url_for('register') }}"
+      class="btn btn-lg btn-success animated-btn"
+    >
+      ✍️ Register
+    </a>
+  </div>
+</div>
+
+<!-- Animate.css -->
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+/>
+
+<style>
+  /* 🌈 Fullscreen Animated Gradient Background */
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: linear-gradient(-45deg, #ff9a9e, #fad0c4, #a1c4fd, #c2e9fb);
+    background-size: 400% 400%;
+    animation: gradientBG 12s ease infinite;
+    color: white;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+
+  @keyframes gradientBG {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  .text-gradient {
+    background: -webkit-linear-gradient(#ff6a00, #ee0979);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .animated-btn {
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  .animated-btn:hover {
+    transform: scale(1.1) rotate(-1deg);
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.3);
+  }
+
+  .welcome-container {
+    text-align: center;
+    margin: 0;
+    padding: 0;
+  }
+</style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const heading = document.querySelector("h1");
+    setInterval(() => {
+      heading.classList.toggle("animate__pulse");
+    }, 3000);
+  });
+</script>
+{% endblock %}

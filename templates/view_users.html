@@ -1,0 +1,103 @@
+{% extends "base.html" %} {% block content %}
+<div class="container-fluid mt-4">
+  <!-- Page Title -->
+  <h2 class="mb-4 fw-bold">All Users</h2>
+
+  <!-- User Table -->
+  <div class="table-responsive" style="overflow-x: auto">
+    <table class="table table-bordered table-hover align-middle w-100">
+      <thead class="table-dark">
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Status</th>
+          <th>Date Joined</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody class="table-light">
+        {% for user in users %}
+        <tr>
+          <td>{{ user.id }}</td>
+          <td class="fw-medium">
+            <i class="bi bi-person-fill me-1 text-primary"></i>
+            {{ user.full_name }}
+          </td>
+          <td>
+            <a href="mailto:{{ user.email }}" class="text-decoration-none">
+              {{ user.email }}
+            </a>
+          </td>
+          <td>
+            {% if user.role == 'admin' %}
+            <span class="badge bg-primary text-capitalize">Admin</span>
+            {% else %}
+            <span class="badge bg-secondary text-capitalize">User</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if user.is_active %}
+            <span class="badge bg-success">
+              <i class="bi bi-check-circle me-1"></i> Active
+            </span>
+            {% else %}
+            <span class="badge bg-danger">
+              <i class="bi bi-x-circle me-1"></i> Blocked
+            </span>
+            {% endif %}
+          </td>
+          <td>{{ user.date_joined.strftime('%Y-%m-%d') }}</td>
+          <td>
+            <div class="d-flex flex-wrap gap-2">
+              {% if user.is_active %}
+              <a
+                href="{{ url_for('admin_block_user', user_id=user.id) }}"
+                class="btn btn-warning btn-sm"
+                data-bs-toggle="tooltip"
+                title="Block User"
+              >
+                <i class="bi bi-slash-circle me-1"></i>Block
+              </a>
+              {% else %}
+              <a
+                href="{{ url_for('admin_unblock_user', user_id=user.id) }}"
+                class="btn btn-success btn-sm"
+                data-bs-toggle="tooltip"
+                title="Unblock User"
+              >
+                <i class="bi bi-unlock me-1"></i>Unblock
+              </a>
+              {% endif %}
+
+              <a
+                href="{{ url_for('admin_delete_user', user_id=user.id) }}"
+                class="btn btn-danger btn-sm"
+                onclick="return confirm('Are you sure you want to delete this user?');"
+                data-bs-toggle="tooltip"
+                title="Delete User"
+              >
+                <i class="bi bi-trash me-1"></i>Delete
+              </a>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Enable Bootstrap Tooltips -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const tooltipTriggerList = [].slice.call(
+      document.querySelectorAll('[data-bs-toggle="tooltip"]')
+    );
+    tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+      new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,76 @@
+{% extends "base.html" %} {% block content %}
+<h2 class="mb-4">Available Quizzes</h2>
+
+<style>
+  /* Smooth arrow rotation */
+  .accordion-button::after {
+    transition: transform 0.3s ease-in-out;
+  }
+  .accordion-button:not(.collapsed)::after {
+    transform: rotate(180deg);
+  }
+
+  /* Quiz link hover effect */
+  .quiz-link {
+    color: #0d6efd;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+  }
+  .quiz-link:hover {
+    color: #0a58ca;
+    text-decoration: underline;
+    padding-left: 4px; /* subtle slide */
+  }
+</style>
+
+<div class="accordion" id="subjectsAccordion">
+  {% for subject in subjects %}
+  <div class="accordion-item shadow-sm rounded-3 mb-3 border-0">
+    <h2 class="accordion-header" id="heading{{ subject.id }}">
+      <button
+        class="accordion-button collapsed fw-semibold rounded-3"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#collapse{{ subject.id }}"
+        aria-expanded="false"
+        aria-controls="collapse{{ subject.id }}"
+      >
+        {{ subject.name }}
+      </button>
+    </h2>
+    <div
+      id="collapse{{ subject.id }}"
+      class="accordion-collapse collapse"
+      aria-labelledby="heading{{ subject.id }}"
+      data-bs-parent="#subjectsAccordion"
+    >
+      <div class="accordion-body">
+        <p class="text-muted">{{ subject.description }}</p>
+
+        {% for chapter in subject.chapters %}
+        <div class="card mb-2 shadow-sm border-0 rounded-3">
+          <div class="card-body p-3">
+            <h6 class="fw-bold">📘 {{ chapter.name }}</h6>
+            <ul class="list-unstyled ms-2 mt-2">
+              {% for quiz in chapter.quizzes %}
+              <li class="mb-1">
+                <a
+                  href="{{ url_for('attempt_quiz', quiz_id=quiz.id) }}"
+                  class="quiz-link"
+                >
+                  ➡️ {{ quiz.name }}
+                </a>
+              </li>
+              {% else %}
+              <li><em>No quizzes available</em></li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

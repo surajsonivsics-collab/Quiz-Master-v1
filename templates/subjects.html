@@ -1,0 +1,36 @@
+{% extends "base.html" %} {% block content %}
+<h2>Manage Subjects</h2>
+<form method="post" action="{{ url_for('add_subject') }}" class="row g-2 mb-3">
+  <div class="col">
+    <input
+      class="form-control"
+      name="name"
+      placeholder="Subject name"
+      required
+    />
+  </div>
+  <div class="col">
+    <input class="form-control" name="description" placeholder="Description" />
+  </div>
+  <div class="col-auto"><button class="btn btn-success">Add</button></div>
+</form>
+<ul class="list-group">
+  {% for s in subjects %}
+  <li class="list-group-item d-flex justify-content-between">
+    {{ s.name }}
+    <span>
+      <a
+        class="btn btn-sm btn-primary"
+        href="{{ url_for('manage_chapters', subject_id=s.id) }}"
+        >Chapters</a
+      >
+      <a
+        class="btn btn-sm btn-danger"
+        href="{{ url_for('delete_subject', id=s.id) }}"
+        >Delete</a
+      >
+    </span>
+  </li>
+  {% endfor %}
+</ul>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "base.html" %} {% block content %}
+<h2>Select Subject for New Chapter</h2>
+
+<form method="POST">
+  <div class="mb-3">
+    <label for="subject_id" class="form-label">Choose Subject</label>
+    <select name="subject_id" id="subject_id" class="form-control" required>
+      <option value="">-- Select Subject --</option>
+      {% for subj in subjects %}
+      <option value="{{ subj.id }}">{{ subj.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <button type="submit" class="btn btn-primary">Next</button>
+  <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary"
+    >Cancel</a
+  >
+</form>
+{% endblock %}

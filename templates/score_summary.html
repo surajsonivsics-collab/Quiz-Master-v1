@@ -1,0 +1,61 @@
+{% extends "base.html" %} {% block content %}
+<div class="container mt-4">
+  <h2>📊 Score Summary</h2>
+  <p class="text-muted">Breakdown of your scores per Subject → Chapter</p>
+
+  {% if summary %} {% for subj in summary %}
+  <div class="card mb-4 shadow-sm">
+    <div class="card-body">
+      <!-- Subject -->
+      <h4 class="card-title text-primary">📘 {{ subj.subject }}</h4>
+      <p>
+        <strong>Total:</strong> {{ subj.total_score }} / {{ subj.total_questions
+        }}
+        <span class="text-muted">({{ subj.percent }}%)</span>
+      </p>
+
+      <!-- Compact Progress bar under total -->
+      <div class="progress mb-3" style="height: 8px; max-width: 220px">
+        <div
+          class="progress-bar {% if subj.percent >= 70 %} bg-success {% elif subj.percent >= 40 %} bg-warning {% else %} bg-danger {% endif %}"
+          role="progressbar"
+          style="width: {{ subj.percent }}%;"
+          aria-valuenow="{{ subj.percent }}"
+          aria-valuemin="0"
+          aria-valuemax="100"
+        ></div>
+      </div>
+
+      <!-- Chapters table -->
+      <div class="table-responsive">
+        <table class="table table-sm table-bordered">
+          <thead class="table-light">
+            <tr>
+              <th>Chapter</th>
+              <th>Score</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for ch in subj.chapters %}
+            <tr>
+              <td>{{ ch.chapter }}</td>
+              <td>{{ ch.scored }} / {{ ch.total }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  {% endfor %} {% else %}
+  <div class="alert alert-info">
+    No scores available yet. Attempt some quizzes to see your summary.
+  </div>
+  {% endif %}
+
+  <!-- Back -->
+  <a href="{{ url_for('user_dashboard') }}" class="btn btn-secondary mt-3">
+    ⬅ Back to Dashboard
+  </a>
+</div>
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends "base.html" %} {% block content %}
+<h2>Add Quiz</h2>
+
+<form method="POST">
+  <div class="mb-3">
+    <label for="name" class="form-label">Quiz Name</label>
+    <input type="text" name="name" id="name" class="form-control" required />
+  </div>
+
+  <div class="mb-3">
+    <label for="date_of_quiz" class="form-label">Date of Quiz</label>
+    <input
+      type="date"
+      name="date_of_quiz"
+      id="date_of_quiz"
+      class="form-control"
+    />
+  </div>
+
+  <div class="mb-3">
+    <label for="time_duration" class="form-label"
+      >Time Duration (minutes)</label
+    >
+    <input
+      type="number"
+      name="time_duration"
+      id="time_duration"
+      class="form-control"
+    />
+  </div>
+
+  <div class="mb-3">
+    <label for="remarks" class="form-label">Remarks</label>
+    <textarea name="remarks" id="remarks" class="form-control"></textarea>
+  </div>
+
+  <div class="form-check mb-3">
+    <input
+      class="form-check-input"
+      type="checkbox"
+      name="is_published"
+      id="is_published"
+      value="true"
+    />
+    <label class="form-check-label" for="is_published">
+      Publish for Users
+    </label>
+  </div>
+
+  <button type="submit" class="btn btn-primary">Add Quiz</button>
+  <a
+    href="{{ url_for('manage_quizzes', chapter_id=chapter_id) }}"
+    class="btn btn-secondary"
+    >Cancel</a
+  >
+</form>
+{% endblock %}

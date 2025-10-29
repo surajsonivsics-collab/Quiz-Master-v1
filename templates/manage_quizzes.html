@@ -1,0 +1,66 @@
+{% extends "base.html" %} {% block content %}
+<h2>Quizzes for Chapter: {{ chapter.name }}</h2>
+<p>{{ chapter.description }}</p>
+
+<div class="mb-3">
+  <a
+    href="{{ url_for('add_quiz', chapter_id=chapter.id) }}"
+    class="btn btn-primary"
+  >
+    + Add Quiz
+  </a>
+  <a
+    href="{{ url_for('manage_chapters', subject_id=chapter.subject_id) }}"
+    class="btn btn-secondary"
+  >
+    ⬅ Back to Chapters
+  </a>
+</div>
+
+<ul class="list-group">
+  {% for quiz in quizzes %}
+  <li class="list-group-item d-flex justify-content-between align-items-center">
+    <div>
+      <strong>{{ quiz.name }}</strong><br />
+      {% if quiz.date_of_quiz or quiz.time_duration %}
+      <small class="text-muted">
+        {{ quiz.date_of_quiz }}{% if quiz.date_of_quiz and quiz.time_duration %}
+        | {% endif %} Duration: {{ quiz.time_duration }} </small
+      ><br />
+      {% endif %} {% if quiz.remarks %}
+      <em>{{ quiz.remarks }}</em>
+      {% endif %}
+    </div>
+
+    <div class="btn-group">
+      <a
+        href="{{ url_for('manage_questions', quiz_id=quiz.id) }}"
+        class="btn btn-info btn-sm"
+      >
+        View Questions
+      </a>
+      <a
+        href="{{ url_for('add_question', quiz_id=quiz.id) }}"
+        class="btn btn-success btn-sm"
+      >
+        Add Question
+      </a>
+      <a
+        href="{{ url_for('edit_quiz', quiz_id=quiz.id) }}"
+        class="btn btn-warning btn-sm"
+      >
+        Edit
+      </a>
+      <a
+        href="{{ url_for('delete_quiz', quiz_id=quiz.id) }}"
+        class="btn btn-danger btn-sm"
+      >
+        Delete
+      </a>
+    </div>
+  </li>
+  {% else %}
+  <li class="list-group-item"><em>No quizzes yet.</em></li>
+  {% endfor %}
+</ul>
+{% endblock %}

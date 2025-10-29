@@ -1,0 +1,39 @@
+{% extends "base.html" %} {% block content %}
+<h3>Edit Quiz</h3>
+<form method="POST">
+  <div class="mb-3">
+    <label class="form-label">Quiz Name</label>
+    <input
+      type="text"
+      name="name"
+      class="form-control"
+      value="{{ quiz.name }}"
+      required
+    />
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Date of Quiz</label>
+    <input
+      type="date"
+      name="date_of_quiz"
+      class="form-control"
+      value="{{ quiz.date_of_quiz }}"
+    />
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Time Duration (minutes)</label>
+    <input
+      type="number"
+      name="time_duration"
+      class="form-control"
+      value="{{ quiz.time_duration }}"
+    />
+  </div>
+  <button type="submit" class="btn btn-primary">Save Changes</button>
+  <a
+    href="{{ url_for('view_quizzes', chapter_id=quiz.chapter_id) }}"
+    class="btn btn-secondary"
+    >Cancel</a
+  >
+</form>
+{% endblock %}

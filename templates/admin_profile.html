@@ -1,0 +1,158 @@
+{% extends "base.html" %} {% block content %}
+<div class="container mt-4">
+  <h2>👤 Admin Profile</h2>
+  <p class="text-muted">Manage your personal account details and settings.</p>
+
+  <div class="row">
+    <!-- Left: Profile Info -->
+    <div class="col-md-6">
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">
+          <strong>Profile Information</strong>
+        </div>
+        <div class="card-body">
+          <!-- Profile Picture -->
+          <div class="text-center mb-3">
+            <img
+              id="profilePreview"
+              src="{{ url_for('static', filename='uploads/' + current_user.profile_picture) if current_user.profile_picture else url_for('static', filename='images/profile_placeholder.png') }}"
+              alt="Profile Picture"
+              class="rounded-circle border"
+              width="120"
+              height="120"
+            />
+          </div>
+
+          <form
+            method="POST"
+            action="{{ url_for('admin_profile') }}"
+            enctype="multipart/form-data"
+          >
+            <input type="hidden" name="update_profile" value="1" />
+
+            <div class="mb-3">
+              <label class="form-label">Profile Picture</label>
+              <input
+                type="file"
+                id="profilePictureInput"
+                name="profile_picture"
+                class="form-control"
+                accept="image/*"
+              />
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Full Name</label>
+              <input
+                type="text"
+                name="full_name"
+                class="form-control"
+                value="{{ current_user.full_name }}"
+              />
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Email</label>
+              <input
+                type="email"
+                name="email"
+                class="form-control"
+                value="{{ current_user.email }}"
+              />
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Role</label>
+              <input type="text" class="form-control" value="Admin" disabled />
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Date Joined</label>
+              <input
+                type="text"
+                class="form-control"
+                value="{{ current_user.created_at.strftime('%Y-%m-%d') if current_user.created_at else 'N/A' }}"
+                disabled
+              />
+            </div>
+
+            <!-- ✅ Show Last Login as plain text -->
+            <div class="mb-3">
+              <p>
+                <strong>Last Login:</strong>
+                {{ current_user.last_login.strftime("%Y-%m-%d %H:%M:%S") if
+                current_user.last_login else "First Login" }}
+              </p>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+              💾 Save Changes
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Change Password -->
+    <div class="col-md-6">
+      <div class="card shadow-sm">
+        <div class="card-header bg-warning">
+          <strong>Change Password</strong>
+        </div>
+        <div class="card-body">
+          <form method="POST" action="{{ url_for('admin_profile') }}">
+            <input type="hidden" name="change_password" value="1" />
+
+            <div class="mb-3">
+              <label class="form-label">Current Password</label>
+              <input
+                type="password"
+                name="old_password"
+                class="form-control"
+                required
+              />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">New Password</label>
+              <input
+                type="password"
+                name="new_password"
+                class="form-control"
+                required
+              />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Confirm New Password</label>
+              <input
+                type="password"
+                name="confirm_password"
+                class="form-control"
+                required
+              />
+            </div>
+            <button type="submit" class="btn btn-warning">
+              🔑 Update Password
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ Script for live image preview -->
+<script>
+  document
+    .getElementById("profilePictureInput")
+    .addEventListener("change", function (event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          document.getElementById("profilePreview").src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+</script>
+{% endblock %}

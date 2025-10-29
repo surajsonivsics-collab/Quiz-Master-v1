@@ -1,0 +1,331 @@
+{% extends "base.html" %} {% block content %}
+<!-- Animate.css for smooth entry -->
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+/>
+
+<style>
+  body {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  }
+
+  .dashboard-card {
+    border-radius: 20px;
+    background: #ffffff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    padding: 20px;
+    transition: all 0.3s ease;
+  }
+
+  .dashboard-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+  }
+
+  .chart-container {
+    position: relative;
+    height: 350px;
+    width: 100%;
+  }
+
+  .stat-card {
+    border: none;
+    border-radius: 15px;
+    color: white;
+    font-weight: 600;
+  }
+
+  .stat-card h4 {
+    font-size: 1.8rem;
+  }
+
+  .btn-custom {
+    border-radius: 50px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+  }
+
+  .btn-custom:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+</style>
+
+<div class="container my-4 animate__animated animate__fadeInUp">
+  <!-- 👤 User Header -->
+  <div class="d-flex align-items-center mb-4">
+    <div>
+      <h3 class="fw-bold mb-0 text-primary">
+        Welcome, {{ current_user.name }}
+      </h3>
+      <p class="text-muted mb-0">Here’s your quiz performance overview 📈</p>
+    </div>
+  </div>
+
+  <!-- 📊 Stat Summary Cards -->
+  <div class="row text-center mb-4 g-3">
+    <div class="col-md-4">
+      <div class="card stat-card bg-success">
+        <div class="card-body">
+          <h4>{{ completed|length if completed is defined else 0 }}</h4>
+          <p>Completed Quizzes</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card stat-card bg-warning text-dark">
+        <div class="card-body">
+          <h4>{{ in_progress|length if in_progress is defined else 0 }}</h4>
+          <p>In Progress</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card stat-card bg-danger">
+        <div class="card-body">
+          <h4>{{ pending|length if pending is defined else 0 }}</h4>
+          <p>Pending</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 📈 Charts Section -->
+  <div class="row">
+    <!-- Line Chart for Scores -->
+    <div class="col-md-6 mb-4">
+      <div class="dashboard-card">
+        <h5 class="fw-bold mb-3 text-secondary">
+          <i class="bi bi-graph-up"></i> Score Progress
+        </h5>
+        <div class="chart-container">
+          <canvas id="scoreChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pie Chart for Progress -->
+    <div class="col-md-6 mb-4">
+      <div class="dashboard-card">
+        <h5 class="fw-bold mb-3 text-secondary">
+          <i class="bi bi-pie-chart-fill"></i> Quiz Progress
+        </h5>
+        <div class="chart-container">
+          <canvas id="progressChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🔘 Action Buttons -->
+  <div class="mt-4 d-flex gap-2 flex-wrap justify-content-center">
+    <a
+      href="{{ url_for('user_quizzes') }}"
+      class="btn btn-primary btn-lg btn-custom"
+      ><i class="bi bi-list-task me-1"></i> View Available Quizzes</a
+    >
+    <a
+      href="{{ url_for('user_scores') }}"
+      class="btn btn-success btn-lg btn-custom"
+      ><i class="bi bi-bar-chart-line me-1"></i> View Total Scores</a
+    >
+    <a
+      href="{{ url_for('score_summary') }}"
+      class="btn btn-warning btn-lg btn-custom"
+      ><i class="bi bi-clipboard-data me-1"></i> Score Summary</a
+    >
+
+    <!-- 📝 Feedback Button -->
+    <button
+      type="button"
+      class="btn btn-lg btn-custom"
+      style="background-color: purple; color: white"
+      data-bs-toggle="modal"
+      data-bs-target="#feedbackModal"
+    >
+      <i class="bi bi-chat-dots me-1"></i> Give Feedback
+    </button>
+  </div>
+</div>
+
+<!-- 📌 Feedback Modal -->
+<div
+  class="modal fade"
+  id="feedbackModal"
+  tabindex="-1"
+  aria-labelledby="feedbackModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content rounded-4 shadow-lg">
+      <!-- Header -->
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="feedbackModalLabel">Submit Feedback</h5>
+        <button
+          type="button"
+          class="btn-close btn-close-white"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+
+      <!-- Body -->
+      <div class="modal-body">
+        <form method="POST" action="{{ url_for('submit_feedback') }}">
+          <!-- Feedback Type -->
+          <div class="mb-3">
+            <label for="feedbackType" class="form-label">Feedback Type</label>
+            <select
+              class="form-select"
+              id="feedbackType"
+              name="feedback_type"
+              required
+            >
+              <option value="" disabled selected>Choose...</option>
+              <option value="quiz">Specific Quiz</option>
+              <option value="system">App / System</option>
+            </select>
+          </div>
+
+          <!-- Quiz Name -->
+          <div class="mb-3 d-none" id="quizNameContainer">
+            <label for="quiz_id" class="form-label">Select Quiz</label>
+            <select class="form-select" id="quiz_id" name="quiz_id">
+              <option value="" disabled selected>Choose a quiz...</option>
+              {% for quiz in quizzes %}
+              <option value="{{ quiz.id }}">{{ quiz.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <!-- Rating -->
+          <div class="mb-3">
+            <label for="rating" class="form-label">Rating</label>
+            <select class="form-select" id="rating" name="rating" required>
+              <option value="1">1 - Very Difficult</option>
+              <option value="2">2 - Difficult</option>
+              <option value="3">3 - Average</option>
+              <option value="4">4 - Easy</option>
+              <option value="5">5 - Very Easy</option>
+            </select>
+          </div>
+
+          <!-- Feedback Text -->
+          <div class="mb-3">
+            <label for="comment" class="form-label">Your Feedback</label>
+            <textarea
+              class="form-control"
+              id="comment"
+              name="comment"
+              rows="4"
+              required
+            ></textarea>
+          </div>
+
+          <!-- Footer -->
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const quizLabels = {{ quiz_labels|tojson|default("[]", true) }};
+  const quizScores = {{ quiz_scores|tojson|default("[]", true) }};
+  const completed = {{ completed|length if completed is defined else 0 }};
+  const inProgress = {{ in_progress|length if in_progress is defined else 0 }};
+  const pending = {{ pending|length if pending is defined else 0 }};
+
+  // Line Chart
+  const scoreCtx = document.getElementById("scoreChart").getContext("2d");
+  const gradient = scoreCtx.createLinearGradient(0, 0, 0, 400);
+  gradient.addColorStop(0, "rgba(54,162,235,0.5)");
+  gradient.addColorStop(1, "rgba(255,255,255,0)");
+
+  new Chart(scoreCtx, {
+    type: "line",
+    data: {
+      labels: quizLabels.length ? quizLabels : ["No Data"],
+      datasets: [
+        {
+          label: "Score Progress",
+          data: quizScores.length ? quizScores : [0],
+          borderColor: "rgba(54, 162, 235, 1)",
+          backgroundColor: gradient,
+          borderWidth: 3,
+          pointRadius: 6,
+          pointBackgroundColor: "#007bff",
+          fill: true,
+          tension: 0.3,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: { duration: 1200 },
+      plugins: { legend: { labels: { font: { size: 14 } } } },
+      scales: {
+        x: { title: { display: true, text: "Quizzes" } },
+        y: { title: { display: true, text: "Scores" }, beginAtZero: true },
+      },
+    },
+  });
+
+  // Pie Chart
+  const progressCtx = document
+    .getElementById("progressChart")
+    .getContext("2d");
+  new Chart(progressCtx, {
+    type: "pie",
+    data: {
+      labels: ["Completed", "In Progress", "Pending"],
+      datasets: [
+        {
+          data: [completed, inProgress, pending],
+          backgroundColor: [
+            "rgba(25, 135, 84, 0.8)",
+            "rgba(255, 193, 7, 0.8)",
+            "rgba(220, 53, 69, 0.8)",
+          ],
+          borderColor: "#fff",
+          borderWidth: 2,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: { animateScale: true, animateRotate: true },
+      plugins: {
+        legend: { position: "bottom", labels: { font: { size: 14 } } },
+      },
+    },
+  });
+
+  // Feedback Modal Logic
+  document
+    .getElementById("feedbackType")
+    .addEventListener("change", function () {
+      let quizNameContainer = document.getElementById("quizNameContainer");
+      if (this.value === "quiz") {
+        quizNameContainer.classList.remove("d-none");
+      } else {
+        quizNameContainer.classList.add("d-none");
+      }
+    });
+</script>
+{% endblock %}

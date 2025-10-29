@@ -1,0 +1,40 @@
+{% extends "base.html" %} {% block content %}
+<h2>Quizzes</h2>
+<form
+  method="post"
+  action="{{ url_for('add_quiz', chapter_id=chapter_id) }}"
+  class="row g-2 mb-3"
+>
+  <div class="col">
+    <input
+      class="form-control"
+      name="duration"
+      placeholder="Duration (hh:mm)"
+      required
+    />
+  </div>
+  <div class="col">
+    <input class="form-control" name="remarks" placeholder="Remarks" />
+  </div>
+  <div class="col-auto"><button class="btn btn-success">Add</button></div>
+</form>
+<ul class="list-group">
+  {% for q in quizzes %}
+  <li class="list-group-item d-flex justify-content-between">
+    Quiz {{ q.id }} - Duration: {{ q.duration }}
+    <span>
+      <a
+        class="btn btn-sm btn-primary"
+        href="{{ url_for('manage_questions', quiz_id=q.id) }}"
+        >Questions</a
+      >
+      <a
+        class="btn btn-sm btn-danger"
+        href="{{ url_for('delete_quiz', id=q.id, chapter_id=chapter_id) }}"
+        >Delete</a
+      >
+    </span>
+  </li>
+  {% endfor %}
+</ul>
+{% endblock %}

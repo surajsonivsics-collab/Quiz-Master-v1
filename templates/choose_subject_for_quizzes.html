@@ -1,0 +1,20 @@
+{% extends "base.html" %} {% block content %}
+<h2>Choose Subject and Chapter to View Quizzes</h2>
+
+<ul class="list-group">
+  {% for subject in subjects %}
+  <li class="list-group-item">
+    <strong>{{ subject.name }}</strong>
+    <ul>
+      {% for chapter in subject.chapters %}
+      <li>
+        <a href="{{ url_for('view_quizzes', chapter_id=chapter.id) }}">
+          📘 View Quizzes for {{ chapter.name }}
+        </a>
+      </li>
+      {% endfor %}
+    </ul>
+  </li>
+  {% endfor %}
+</ul>
+{% endblock %}
