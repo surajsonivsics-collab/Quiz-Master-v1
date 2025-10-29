@@ -9,3 +9,4 @@ openpyxl
 werkzeug
 gunicorn
 docx2txt
+PyPDF2
