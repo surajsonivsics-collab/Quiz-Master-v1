@@ -81,9 +81,20 @@ block navbar %}{% endblock %} {% block content %}
 <script>
   document.addEventListener("DOMContentLoaded", () => {
     const heading = document.querySelector("h1");
-    setInterval(() => {
-      heading.classList.toggle("animate__pulse");
-    }, 3000);
-  });
+     const effects = [
+    "animate__pulse",
+    "animate__rubberBand",
+    "animate__tada",
+    "animate__jello",
+    "animate__bounce"
+  ];
+      setInterval(() => {
+    // Remove previous effects
+    heading.classList.remove(...effects);
+    // Add a random effect
+    const randomEffect = effects[Math.floor(Math.random() * effects.length)];
+    heading.classList.add(randomEffect);
+  }, 3000);
+});
 </script>
 {% endblock %}

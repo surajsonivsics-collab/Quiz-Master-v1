@@ -71,6 +71,7 @@ class Score(db.Model):
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
     total_scored = db.Column(db.Integer)
     total_questions = db.Column(db.Integer)
+    status = db.Column(db.String(20), default="Completed")
 
     # ✅ one attempt can have multiple answers
     answers = db.relationship(

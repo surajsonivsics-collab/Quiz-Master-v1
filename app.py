@@ -1,3 +1,4 @@
+# Flask core
 from flask import (
     Flask,
     render_template,
@@ -8,7 +9,21 @@ from flask import (
     session,
     send_file,
 )
-from models import db, User, Subject, Chapter, Quiz, Question, Score, UserAnswer
+
+# Database & Models
+from models import (
+    db,
+    User,
+    Subject,
+    Chapter,
+    Quiz,
+    Question,
+    Score,
+    UserAnswer,
+    Feedback,
+)
+
+# Authentication
 from flask_login import (
     LoginManager,
     login_user,
@@ -16,24 +31,31 @@ from flask_login import (
     login_required,
     current_user,
 )
+
+# Security
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.utils import secure_filename
+
+# Migrations
 from flask_migrate import Migrate
+
+# Email
 from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
+
+# File & Export Utilities
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 import openpyxl
-import io
 import csv
+import io
+
+# Standard Library
 from datetime import datetime
 import os
-from werkzeug.utils import secure_filename
-from models import Feedback  # adjust path if needed
 import random
-from flask import render_template
-from flask_login import login_required, current_user
-from flask import request, redirect, url_for, flash
-from flask import session
+from sqlalchemy import func
+
 
 app = Flask(__name__)
 # Mail configuration (using Gmail as example)
@@ -403,6 +425,24 @@ def admin_dashboard():
     subject_names = [s.name for s in subjects]
     quiz_counts = [sum(len(c.quizzes) for c in s.chapters) for s in subjects]
 
+    # ===============================
+    # QUIZ STATUS COUNTS (Pie Chart)
+    # ===============================
+    completed = Score.query.filter_by(status="Completed").count()
+    pending = Score.query.filter_by(status="Pending").count()
+    in_progress = Score.query.filter_by(status="In Progress").count()
+
+    # ===============================
+    # QUIZZES PER SUBJECT (Bar Chart)
+    # ===============================
+    quizzes_per_subject = (
+        db.session.query(Subject.name, func.count(Quiz.id))
+        .join(Chapter, Chapter.subject_id == Subject.id)
+        .join(Quiz, Quiz.chapter_id == Chapter.id)
+        .group_by(Subject.name)
+        .all()
+    )
+
     return render_template(
         "admin_dashboard.html",
         total_users=total_users,  # ✅ matches your HTML
@@ -413,6 +453,10 @@ def admin_dashboard():
         quiz_counts=quiz_counts,
         published_quizzes=published_quizzes,
         unpublished_quizzes=unpublished_quizzes,
+        quizzes_per_subject=quizzes_per_subject,
+        completed=completed,
+        pending=pending,
+        in_progress=in_progress,
     )
 
 
@@ -632,16 +676,18 @@ def edit_subject(subject_id):
     return render_template("edit_subject.html", subject=subject)
 
 
-@app.route("/admin/subjects/delete/<int:subject_id>")
+@app.route("/admin/subjects/delete/<int:subject_id>", methods=["POST"])
 @login_required
 def delete_subject(subject_id):
     if current_user.role != "admin":
+        flash("Unauthorized access", "danger")
         return redirect(url_for("user_dashboard"))
 
     subject = Subject.query.get_or_404(subject_id)
     db.session.delete(subject)
     db.session.commit()
-    flash("✅ Subject deleted successfully!", "info")
+
+    flash("Subject deleted successfully!", "success")
     return redirect(url_for("admin_dashboard"))
 
 
@@ -1427,10 +1473,11 @@ def view_users():
     return render_template("view_users.html", users=users)
 
 
-@app.route("/admin/delete_user/<int:user_id>", methods=["POST", "GET"])
+@app.route("/admin/delete_user/<int:user_id>", methods=["POST"])
 @login_required
 def admin_delete_user(user_id):
     if current_user.role != "admin":
+        flash("Unauthorized access.", "danger")
         return redirect(url_for("user_dashboard"))
 
     user = User.query.get_or_404(user_id)
@@ -1438,9 +1485,11 @@ def admin_delete_user(user_id):
         flash("⚠️ You cannot delete another admin.", "warning")
         return redirect(url_for("admin_users"))
 
+    user_name = user.full_name
+
     db.session.delete(user)
     db.session.commit()
-    flash(f"🗑️ User {user.full_name} has been deleted.", "danger")
+    flash(f"🗑️ User {user_name} has been deleted successfully.", "success")
     return redirect(url_for("admin_users"))
 
 

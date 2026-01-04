@@ -200,7 +200,7 @@
           </div>
 
           <!-- Rating -->
-          <div class="mb-3">
+          <div class="mb-3" id="ratingContainer">
             <label for="rating" class="form-label">Rating</label>
             <select class="form-select" id="rating" name="rating" required>
               <option value="1">1 - Very Difficult</option>
@@ -317,15 +317,24 @@
   });
 
   // Feedback Modal Logic
-  document
-    .getElementById("feedbackType")
-    .addEventListener("change", function () {
-      let quizNameContainer = document.getElementById("quizNameContainer");
-      if (this.value === "quiz") {
-        quizNameContainer.classList.remove("d-none");
-      } else {
-        quizNameContainer.classList.add("d-none");
-      }
-    });
+  document.addEventListener("DOMContentLoaded", function () {
+  const feedbackType = document.getElementById("feedbackType");
+  const quizNameContainer = document.getElementById("quizNameContainer");
+  const ratingContainer = document.getElementById("ratingContainer");
+
+  // Initial state
+  quizNameContainer.classList.add("d-none");
+  ratingContainer.classList.add("d-none");
+
+  feedbackType.addEventListener("change", function () {
+    if (this.value === "quiz") {
+      quizNameContainer.classList.remove("d-none");
+      ratingContainer.classList.remove("d-none");
+    } else if (this.value === "system") {
+      quizNameContainer.classList.add("d-none");
+      ratingContainer.classList.add("d-none");
+    }
+  });
+});
 </script>
 {% endblock %}
